@@ -20,7 +20,7 @@ class Sighting(Base):
     id = Column(Integer, primary_key = True)
     title = Column(String(250), nullable = False)
     description = Column(String(2000))
-    coords = Column(String(200), nullable = False)
+    location = Column(String(200), nullable = False)
     sighting_type_id = Column(Integer, ForeignKey('sighting_type.id'))
     sighting_type = relationship(SightingType)
 
