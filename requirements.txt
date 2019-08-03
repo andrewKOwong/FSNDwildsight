@@ -1,0 +1,17 @@
+chardet==2.3.0
+language-selector==0.1
+numpy==1.17.0
+pandas==0.24.2
+pycodestyle==2.5.0
+pycurl==7.43.0
+pygobject==3.20.0
+python-apt==1.1.0b1+ubuntu0.16.4.4
+python-dateutil==2.8.0
+python-debian==0.1.27
+python-systemd==231
+pytz==2019.2
+requests==2.9.1
+six==1.10.0
+ssh-import-id==5.5
+ufw==0.35
+urllib3==1.13.1
