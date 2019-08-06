@@ -4,7 +4,7 @@ import pandas as pd
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
-from database_setup import Sighting, SightingType
+from database_setup import Sighting, SightingType, Base
 
 # Read in some demo data
 DEMO_DATA_FILE = 'sightings_data.csv'
@@ -13,6 +13,7 @@ demo_data = pd.read_csv(DEMO_DATA_FILE)
 # Hook up db engine to a Session class
 engine = create_engine('sqlite:///wildsight.db')
 Session = sessionmaker(bind=engine)
+Base.metadata.bind = engine
 # Instantiate a session to access the db
 session = Session()
 
