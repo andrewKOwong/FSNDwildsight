@@ -1,0 +1,10 @@
+<html>
+    <head>
+        <title>Welcome to Wildsight!</title>
+    </head>
+    <body>
+        {% for sighting in sightings %}
+        <div><p>{{ sighting.title }}</p></div>
+        {% endfor %}
+    </body>
+</html>

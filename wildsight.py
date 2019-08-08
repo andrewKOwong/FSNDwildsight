@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 
 from database_setup import Sighting, SightingType, Base
 
-from flask import Flask, escape
+from flask import Flask, escape, render_template
 app = Flask(__name__)
 
 engine = create_engine('sqlite:///wildsight.db')
@@ -19,11 +19,7 @@ def home():
     #sighting_type = session.query(SightingType).first()
     #sightings = session.query(Sighting).filter_by(sighting_type_id = sighting_type.id)
     sightings = session.query(Sighting)
-    output = ''
-    for i in sightings:
-        output += i.title
-        output += '</br>'
-    return output
+    return render_template('index.html', sightings=sightings)
 
 # Displays types available
 @app.route('/types/')
