@@ -3,14 +3,14 @@
         <title>Welcome to Wildsight!</title>
     </head>
     <body>
-        <a href = "{{url_for('create_sighting')}}"> New Entry </a>
+        <a href="{{url_for('create_sighting')}}"> New Entry </a>
 
         {% for sighting in sightings %}
         
         <div><p>{{ sighting.title }}</p></div>
         
-        <a href = "{{url_for('edit_sighting', type = sighting.sighting_type.type, id = sighting.id)}}">Edit</a>
-        <a href = "{{url_for('delete_sighting', type = sighting.sighting_type.type, id = sighting.id)}}">Delete</a>
+        <a href="{{url_for('edit_sighting', type = sighting.sighting_type.type, id = sighting.id)}}">Edit</a>
+        <a href="{{url_for('delete_sighting', type = sighting.sighting_type.type, id = sighting.id)}}">Delete</a>
 
         {% endfor %}
     </body>
