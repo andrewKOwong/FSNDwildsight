@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 
 from database_setup import Sighting, SightingType, Base
 
-from flask import Flask, escape, render_template
+from flask import Flask, escape, render_template, request, redirect, url_for
 app = Flask(__name__)
 
 engine = create_engine('sqlite:///wildsight.db')
@@ -20,6 +20,32 @@ def home():
     #sightings = session.query(Sighting).filter_by(sighting_type_id = sighting_type.id)
     sightings = session.query(Sighting)
     return render_template('index.html', sightings=sightings)
+
+# Placeholder pages to create, edit, and delete pages
+@app.route('/sightings/new/', methods=['GET', 'POST'])
+def create_sighting():
+    if request.method == 'POST':
+        # TODO add sighting type query
+        sighting_type = session.query(SightingType).filter_by(type = request.form['sighting_type']).one()
+        new_sighting = Sighting(title = request.form['title'],
+                                description = request.form['description'],
+                                location = request.form['location'],
+                                sighting_type = sighting_type)
+        session.add(new_sighting)
+        session.commit()
+        return redirect(url_for('create_sighting'))
+        
+    else:     
+        sighting_types = session.query(SightingType)
+        return render_template('new_sighting.html', sighting_types=sighting_types)
+
+@app.route('/sightings/<type>/<int:id>/edit/')
+def edit_sighting(type, id):
+    return 'edit sighting'
+
+@app.route('/sightings/<type>/<int:id>/delete/')
+def delete_sighting(type, id):
+    return 'delete sighting'
 
 # Displays types available
 @app.route('/types/')
@@ -41,19 +67,6 @@ def list_sightings_in_type(type):
         output += i.title
         output += '</br>'
     return output
-
-# Placeholder pages to create, edit, and delete pages
-@app.route('/sightings/new/')
-def create_sighting():
-    return 'new sighting'
-
-@app.route('/sightings/<type>/<int:id>/edit/')
-def edit_sighting(type, id):
-    return 'edit sighting'
-
-@app.route('/sightings/<type>/<int:id>/delete/')
-def delete_sighting(type, id):
-    return 'delete sighting'
 
 if __name__ == '__main__':
     app.debug = True

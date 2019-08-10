@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <title>Wildsight wildlife sighting database - Log a new sighting </title>
+    </head>
+    <body>
+        <h1> Log a new wildlife sighting </h1>
+        <p>Please fill out the form below</p>
+        <br>
+
+        <form method="POST">
+        <p>Title</p>
+        <input type="text" size='30' name="title" maxlength="250" required>
+        
+        <p>Description</p>
+        <input type="text" size='30' name="description" maxlength="2000">
+
+        <p>Location</p>
+        <input type="text" size='30' name="location" maxlength="200">
+
+        <p>Sighting Type</p>
+        <select name="sighting_type">
+            {% for sighting_type in sighting_types %}
+            <option value="{{sighting_type.type}}">{{sighting_type.type}}</option>
+            {% endfor %}
+        </select>
+
+        <input type="submit" value="Add to database!">
+        </form>
+        
+        <br>
+
+        <a href="{{url_for('home')}}">Home</a>
+
+    </body>
+</html>
