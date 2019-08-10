@@ -43,16 +43,16 @@ def list_sightings_in_type(type):
     return output
 
 # Placeholder pages to create, edit, and delete pages
-@app.route('/types/<type>/new/')
-def create_sighting(type):
+@app.route('/sightings/new/')
+def create_sighting():
     return 'new sighting'
 
-@app.route('/types/<type>/edit/')
-def edit_sighting(type):
+@app.route('/sightings/<type>/<int:id>/edit/')
+def edit_sighting(type, id):
     return 'edit sighting'
 
-@app.route('/types/<type>/delete/')
-def delete_sighting(type):
+@app.route('/sightings/<type>/<int:id>/delete/')
+def delete_sighting(type, id):
     return 'delete sighting'
 
 if __name__ == '__main__':
