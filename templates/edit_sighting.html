@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title>Wildsight wildlife sighting database - Edit sighting</title>
+    </head>
+    <body>
+        <h1> Edit a wildlife sighting </h1>
+        <p>Please edit with the form below</p>
+        <br>
+      
+        <form method="POST">
+        <p>Title</p>
+        <input type="text" size='30' name="title" maxlength="250" value="{{sighting.title}}" required>
+        
+        <p>Description</p>
+        <input type="text" size='30' name="description" maxlength="2000" value="{{sighting.description}}">
+
+        <p>Location</p>
+        <input type="text" size='30' name="location" maxlength="200" value="{{sighting.location}}" required>
+
+        <p>Sighting Type</p>
+        <select name="sighting_type" required>
+            <option value="{{current_sighting_type.type}}" selected>{{current_sighting_type.type}}</option>
+            {% for other_sighting_type in other_sighting_types %}
+            <option value="{{other_sighting_type.type}}">{{other_sighting_type.type}}</option>
+            {% endfor %}
+        </select>
+
+        <input type="submit" value="Edit!">
+        </form>
+        
+        <br>
+
+        <a href="{{url_for('home')}}">Cancel</a>
+
+    </body>
+</html>
