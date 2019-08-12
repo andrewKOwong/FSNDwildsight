@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <title>Wildsight wildlife sighting database - Delete sighting?</title>
+    </head>
+    <body>
+        <h1> Confirm delete of this sighting? </h1>
+        <form method="POST">
+            <input type='submit', value='Delete'>
+        </form>
+        <a href="{{url_for('home')}}">Cancel</a>
+        
+        <h2>Title</h2>
+        <p>{{sighting.title}}</p>
+        <h2>Description</h2>
+        <p>{{sighting.description}}</p>
+        <h2>Location</h2>
+        <p>{{sighting.location}}</p>
+        <h2>Sighting Type</h2>
+        <p>{{sighting.sighting_type.type}}</p>
+
+    </body>
+</html>

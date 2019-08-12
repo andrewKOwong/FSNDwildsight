@@ -38,7 +38,7 @@ def create_sighting():
         sighting_types = session.query(SightingType)
         return render_template('new_sighting.html', sighting_types = sighting_types)
 
-@app.route('/sightings/<type>/<int:id>/edit/', methods = ['GET', 'POST'])
+@app.route('/sightings/<type>/<int:id>/edit/', methods=['GET', 'POST'])
 def edit_sighting(type, id):
     if request.method == 'POST':
         sighting = session.query(Sighting).filter_by(id=id).one()
@@ -67,9 +67,15 @@ def edit_sighting(type, id):
                                 current_sighting_type=current_sighting_type,
                                 other_sighting_types=other_sighting_types)
 
-@app.route('/sightings/<type>/<int:id>/delete/')
+@app.route('/sightings/<type>/<int:id>/delete/', methods=['GET','POST'])
 def delete_sighting(type, id):
-    return 'delete sighting'
+    sighting = session.query(Sighting).filter_by(id=id).one()
+    if request.method == 'POST':
+        session.delete(sighting)
+        session.commit()
+        return redirect(url_for('home'))
+    else:
+        return render_template('delete_sighting.html', sighting=sighting)
 
 # Displays types available
 @app.route('/types/')
