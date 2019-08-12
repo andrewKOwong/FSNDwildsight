@@ -15,10 +15,10 @@
         <input type="text" size='30' name="description" maxlength="2000">
 
         <p>Location</p>
-        <input type="text" size='30' name="location" maxlength="200">
+        <input type="text" size='30' name="location" maxlength="200" required>
 
         <p>Sighting Type</p>
-        <select name="sighting_type">
+        <select name="sighting_type" required>
             {% for sighting_type in sighting_types %}
             <option value="{{sighting_type.type}}">{{sighting_type.type}}</option>
             {% endfor %}
