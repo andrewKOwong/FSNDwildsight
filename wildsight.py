@@ -52,6 +52,9 @@ def edit_sighting(type, id):
             sighting.sighting_type = sighting_type
         # Description is not required
         sighting.description = request.form['description']
+        
+        session.add(sighting)
+        session.commit()
 
         return redirect(url_for('home'))
 
