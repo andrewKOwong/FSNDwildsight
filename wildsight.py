@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 
 from database_setup import Sighting, SightingType, Base
 
-from flask import Flask, escape, render_template, request, redirect, url_for
+from flask import Flask, escape, render_template, request, redirect, url_for, flash
 app = Flask(__name__)
 
 engine = create_engine('sqlite:///wildsight.db')
@@ -32,6 +32,7 @@ def create_sighting():
                                 sighting_type = sighting_type)
         session.add(new_sighting)
         session.commit()
+        flash("New sighting created!")
         return redirect(url_for('create_sighting'))
         
     else:     
@@ -56,6 +57,7 @@ def edit_sighting(type, id):
         session.add(sighting)
         session.commit()
 
+        flash("Sighting successfully edited!")
         return redirect(url_for('home'))
 
     else:
@@ -73,6 +75,7 @@ def delete_sighting(type, id):
     if request.method == 'POST':
         session.delete(sighting)
         session.commit()
+        flash("Sighting deleted!")
         return redirect(url_for('home'))
     else:
         return render_template('delete_sighting.html', sighting=sighting)
@@ -100,4 +103,5 @@ def list_sightings_in_type(type):
 
 if __name__ == '__main__':
     app.debug = True
+    app.secret_key = 'placeholder_secret_key'
     app.run(host = '0.0.0.0', port = 5000)

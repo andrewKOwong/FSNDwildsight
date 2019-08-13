@@ -3,6 +3,16 @@
         <title>Welcome to Wildsight!</title>
     </head>
     <body>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
         <a href="{{url_for('create_sighting')}}"> New Entry </a>
 
         {% for sighting in sightings %}

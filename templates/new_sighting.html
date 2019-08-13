@@ -3,6 +3,17 @@
         <title>Wildsight wildlife sighting database - Log a new sighting </title>
     </head>
     <body>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
         <h1> Log a new wildlife sighting </h1>
         <p>Please fill out the form below</p>
         <br>
