@@ -1,27 +1,38 @@
 <html>
     <head>
         <title>Welcome to Wildsight!</title>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css')}}">
+
     </head>
     <body>
+        <ul id="topbar">
+            <li id="top_title">WILDSIGHT - Wildlife Sightings</li>
+            <li id="nav_home"><a href="{{url_for('home')}}">Home</a></li>
+        </ul>
+
+
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 <ul>
                     {% for message in messages %}
-                    <li>{{ message }}</li>
+                    <li class="flash">{{ message }}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
         {% endwith %}
-
-        <a href="{{url_for('create_sighting')}}"> New Entry </a>
-
-        {% for sighting in sightings %}
         
-        <div><p>{{ sighting.title }}</p></div>
-        
-        <a href="{{url_for('edit_sighting', type = sighting.sighting_type.type, id = sighting.id)}}">Edit</a>
-        <a href="{{url_for('delete_sighting', type = sighting.sighting_type.type, id = sighting.id)}}">Delete</a>
+        <div class="flex-container">
+            <div><a href="{{url_for('create_sighting')}}"> New Entry </a></div>
+            {% for sighting in sightings %}
+            <div>
+                <p>{{ sighting.title }}
+                    <a href="{{url_for('edit_sighting', type = sighting.sighting_type.type, id = sighting.id)}}">Edit</a>
+                    <a href="{{url_for('delete_sighting', type = sighting.sighting_type.type, id = sighting.id)}}">Delete</a>
+                </p>
+            </div>
+            
+            {% endfor %}
+        </div>
 
-        {% endfor %}
     </body>
 </html>

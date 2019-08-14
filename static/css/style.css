@@ -1,0 +1,81 @@
+
+body {
+    background-color: #f6f6f6;
+    font-family:Arial
+}
+
+/* ---- TOP NAVIGATION BAR ---- */
+/* Top bar with title and nav links */
+#topbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    font-weight: bold;
+    font-size: xx-large;
+    color: #f2f2f2;
+    text-align: center;
+}
+ 
+/* Left side title box */
+#top_title {
+    float: left;
+    display: block;
+    padding: 14px 16px;
+}
+
+/* Home link on the right */
+#nav_home {float: right}
+
+/* topbar link aesthetics */
+#topbar a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* topbar link changes colour on hover */
+#topbar a:hover {
+    background-color: #ddd;
+    color: black;
+  }
+
+/* ---- END TOP NAVIGATION BAR ---- */
+ 
+/* TODO FLASH MESSAGE */
+
+/* FLEX BOX SIGHTING TYPES */
+.flex-container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.flex-container > div {
+  background-color: rgb(150, 150, 150);
+  height: 23vw;
+  width: 23%;
+  margin: 1%;
+}
+
+/* Flash message formatting */
+
+.flash{
+  display: block;
+  margin: auto;
+  width: 20%;
+  border-radius: 5px; 
+  background-color: rgb(56, 55, 55);
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  font-size: medium;
+}
+/* TODO BOXES FOR ITEMS */
+
+
+  
