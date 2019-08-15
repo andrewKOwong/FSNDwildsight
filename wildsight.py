@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-from sqlalchemy.orm import sessionmaker
+from builtins import type as typeof # For debugging
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 
 from database_setup import Sighting, SightingType, Base
@@ -7,13 +8,20 @@ from database_setup import Sighting, SightingType, Base
 from flask import Flask, escape, render_template, request, redirect, url_for, flash
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///wildsight.db')
-Base.metadata.bind = engine
+# Use of Flask-SQLAlchemy is recommended to avoid # multi threading issues.
+# See https://docs.sqlalchemy.org/en/13/orm/contextual.html 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///wildsight.db'
+db = SQLAlchemy(app)
+session = db.session
 
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
+# Old non Flask SQLAlchemy code
+#from sqlalchemy.orm import sessionmaker
+#engine = create_engine('sqlite:///wildsight.db')
+#Base.metadata.bind = engine
+#DBSession = sessionmaker(bind=engine)
+#session = DBSession()
 
-# Displays all sightings
+# Home page displays categories of sighting types
 @app.route('/')
 def home():
     #sighting_type = session.query(SightingType).first()
@@ -21,6 +29,18 @@ def home():
     types = session.query(SightingType) # Sighting Types are pre-ordered before db creation
     sightings = session.query(Sighting)
     return render_template('index.html', sightings=sightings, types=types)
+
+# Displays sightings of a particular type
+@app.route('/types/<type>/')
+def type_home(type):
+    #sighting_type = session.query(SightingType).filter_by(type=type).one()
+    type_id = request.args.get('type_id')
+    sightings = session.query(Sighting).filter_by(sighting_type_id=type_id)
+    output = ''
+    for i in sightings:
+        output += i.title
+        output += '</br>'
+    return output
 
 # Placeholder pages to create, edit, and delete pages
 @app.route('/sightings/new/', methods = ['GET', 'POST'])
@@ -88,17 +108,6 @@ def list_types():
     output = ''
     for i in types:
         output += i.type
-        output += '</br>'
-    return output
-
-# Displays sightings of a particular type
-@app.route('/types/<type>/')
-def list_sightings_in_type(type):
-    sighting_type = session.query(SightingType).filter_by(type=type).one()
-    sightings = session.query(Sighting).filter_by(sighting_type=sighting_type)
-    output = ''
-    for i in sightings:
-        output += i.title
         output += '</br>'
     return output
 
