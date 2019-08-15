@@ -12,6 +12,8 @@
         
             <div class="flex-box">
                 <div class="sighting_underlay"></div>
+                <img class="icon_edit" src="{{url_for('static', filename='icon/icon_edit.png')}}">
+                <img class="icon_close" src="{{url_for('static', filename='icon/icon_close.png')}}">
                 <div class="sighting_title sighting_text">{{ sighting.title }}</div>
                 <div class="sighting_desc_h sighting_text">Description:</div>
                 <div class="sighting_desc sighting_text">{{ sighting.description }}</div>
