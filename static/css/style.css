@@ -27,6 +27,11 @@ body {
 /* Home link on the right */
 #nav_home {float: right}
 
+#nav_new_entry {
+  float: right;
+  margin-right: 30px;
+}
+
 /* topbar link aesthetics */
 #topbar a {
   display: block;
@@ -43,9 +48,22 @@ body {
   }
 
 /* ---- END TOP NAVIGATION BAR ---- */
- 
-/* TODO FLASH MESSAGE */
 
+/* Flash message formatting */
+
+.flash{
+  display: block;
+  margin: auto;
+  width: 20%;
+  border-radius: 5px; 
+  background-color: rgb(56, 55, 55);
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  font-size: medium;
+}
+ 
 /* FLEX BOX SIGHTING TYPES */
 .flex-container {
   display: flex;
@@ -54,14 +72,11 @@ body {
 }
 
 .flex-box {
-  background-color: rgb(150, 150, 150);
+  position: relative;
+  background-color: black;
   height: 30vw;
   width: 30%;
   margin: 1%;
-}
-
-.flex-box {
-  position: relative;
 }
 
 .type_text {
@@ -80,21 +95,9 @@ body {
   object-fit: cover;
 }
 
-/* Flash message formatting */
-
-.flash{
-  display: block;
-  margin: auto;
-  width: 20%;
-  border-radius: 5px; 
-  background-color: rgb(56, 55, 55);
-  color: white;
-  padding: 10px;
-  text-align: center;
-  font-weight: bold;
-  font-size: medium;
+.type_image:hover {
+  opacity:0.5;
+  transition: 1s ease;
 }
-/* TODO BOXES FOR ITEMS */
-
 
   

@@ -8,6 +8,7 @@
         <ul id="topbar">
             <li id="top_title">WILDSIGHT - Wildlife Sightings</li>
             <li id="nav_home"><a href="{{url_for('home')}}">Home</a></li>
+            <li id="nav_new_entry"><a href="{{url_for('create_sighting')}}"> New Entry </a></li>
         </ul>
 
 
@@ -22,12 +23,14 @@
         {% endwith %}
         
         <div class="flex-container">
-            <div class="flex-box new_entry"><a href="{{url_for('create_sighting')}}"> New Entry </a></div>
             {% for type in types %}
-            <div class="flex-box type">
-                <img class="type_image" src="{{url_for('static', filename=type.image)}}">
-                <div class="type_text">{{ type.type }}</div>
-            </div>
+            
+                <div class="flex-box type">
+                    <a href="{{url_for('type_home', type=type)}}">
+                        <img class="type_image" src="{{url_for('static', filename=type.image)}}">
+                    </a>
+                    <div class="type_text">{{ type.type }}</div>
+                </div>
             
             {% endfor %}
         </div>
