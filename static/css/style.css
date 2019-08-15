@@ -1,7 +1,7 @@
 
 body {
     background-color: #f6f6f6;
-    font-family:Arial
+    font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
 }
 
 /* ---- TOP NAVIGATION BAR ---- */
@@ -12,7 +12,6 @@ body {
     padding: 0;
     overflow: hidden;
     background-color: #333;
-    font-weight: bold;
     font-size: xx-large;
     color: #f2f2f2;
     text-align: center;
@@ -54,11 +53,31 @@ body {
   justify-content: center;
 }
 
-.flex-container > div {
+.flex-box {
   background-color: rgb(150, 150, 150);
-  height: 23vw;
-  width: 23%;
+  height: 30vw;
+  width: 30%;
   margin: 1%;
+}
+
+.flex-box {
+  position: relative;
+}
+
+.type_text {
+  position: absolute;
+  bottom: 5%;
+  width: 100%;
+  font-size: 40px;
+  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+  color: white;
+  text-align: center;
+}
+
+.type_image {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
 /* Flash message formatting */

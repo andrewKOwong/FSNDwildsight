@@ -22,13 +22,11 @@
         {% endwith %}
         
         <div class="flex-container">
-            <div><a href="{{url_for('create_sighting')}}"> New Entry </a></div>
-            {% for sighting in sightings %}
-            <div>
-                <p>{{ sighting.title }}
-                    <a href="{{url_for('edit_sighting', type = sighting.sighting_type.type, id = sighting.id)}}">Edit</a>
-                    <a href="{{url_for('delete_sighting', type = sighting.sighting_type.type, id = sighting.id)}}">Delete</a>
-                </p>
+            <div class="flex-box new_entry"><a href="{{url_for('create_sighting')}}"> New Entry </a></div>
+            {% for type in types %}
+            <div class="flex-box type">
+                <img class="type_image" src="{{url_for('static', filename=type.image)}}">
+                <div class="type_text">{{ type.type }}</div>
             </div>
             
             {% endfor %}

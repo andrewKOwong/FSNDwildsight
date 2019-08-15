@@ -18,8 +18,9 @@ session = DBSession()
 def home():
     #sighting_type = session.query(SightingType).first()
     #sightings = session.query(Sighting).filter_by(sighting_type_id = sighting_type.id)
+    types = session.query(SightingType) # Sighting Types are pre-ordered before db creation
     sightings = session.query(Sighting)
-    return render_template('index.html', sightings=sightings)
+    return render_template('index.html', sightings=sightings, types=types)
 
 # Placeholder pages to create, edit, and delete pages
 @app.route('/sightings/new/', methods = ['GET', 'POST'])
