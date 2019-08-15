@@ -1,39 +1,22 @@
-<html>
-    <head>
-        <title>Welcome to Wildsight!</title>
-        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css')}}">
+{% extends "base_layout.html" %}
 
-    </head>
-    <body>
-        <ul id="topbar">
-            <li id="top_title">WILDSIGHT - Wildlife Sightings</li>
-            <li id="nav_home"><a href="{{url_for('home')}}">Home</a></li>
-            <li id="nav_new_entry"><a href="{{url_for('create_sighting')}}"> New Entry </a></li>
-        </ul>
+{% block head %}
+    {{ super() }}
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/flex-box_type.css')}}">
+{% endblock %}
 
 
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                    <li class="flash">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
+{% block content %}
+    <div class="flex-container">
+        {% for type in types %}
         
-        <div class="flex-container">
-            {% for type in types %}
-            
-                <div class="flex-box type">
-                    <a href="{{url_for('type_home', type=type)}}">
-                        <img class="type_image" src="{{url_for('static', filename=type.image)}}">
-                    </a>
-                    <div class="type_text">{{ type.type }}</div>
-                </div>
-            
-            {% endfor %}
-        </div>
-
-    </body>
-</html>
+            <div class="flex-box">
+                <a href="{{url_for('type_home', type=type.type, type_id=type.id)}}">
+                    <img class="type_image" src="{{url_for('static', filename=type.image)}}">
+                </a>
+                <div class="type_text">{{ type.type }}</div>
+            </div>
+        
+        {% endfor %}
+    </div>
+{% endblock %}

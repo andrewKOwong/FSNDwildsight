@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+    <head>
+    {% block head %}
+        <title>Wildsight!</title>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/body.css')}}">
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/topbar.css')}}">
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/flash.css')}}">
+    {% endblock %}
+    </head>
+    <body>
+        <ul id="topbar">
+            <li id="top_title">WILDSIGHT - Wildlife Sightings</li>
+            <li id="nav_home"><a href="{{url_for('home')}}">Home</a></li>
+            <li id="nav_new_entry"><a href="{{url_for('create_sighting')}}"> New Entry </a></li>
+        </ul>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                    <li class="flash">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}
+        <div class="flex-container">
+            {% for type in types %}
+            
+                <div class="flex-box type">
+                    <a href="{{url_for('type_home', type=type.type, type_id=type.id)}}">
+                        <img class="type_image" src="{{url_for('static', filename=type.image)}}">
+                    </a>
+                    <div class="type_text">{{ type.type }}</div>
+                </div>
+            
+            {% endfor %}
+        </div>
+        {% endblock %}
+    </body>
+</html>

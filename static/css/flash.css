@@ -1,0 +1,13 @@
+/* Flash message formatting */
+.flash{
+    display: block;
+    margin: auto;
+    width: 20%;
+    border-radius: 5px; 
+    background-color: rgb(56, 55, 55);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: medium;
+  }
