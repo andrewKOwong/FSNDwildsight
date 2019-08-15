@@ -14,6 +14,7 @@ class SightingType(Base):
 
     id = Column(Integer, primary_key = True)
     type = Column(String(250), nullable = False)
+    image = Column(String(250), nullable = False)
 
 class Sighting(Base):
     __tablename__ = 'sighting'

@@ -1,0 +1,7 @@
+type,image
+Flower,image/type_flower.jpg
+Tree,image/type_tree.jpg
+Plant,image/type_plant.jpg
+Land Animal,image/type_land_animal.jpg
+Sea Animal,image/type_sea_animal.jpg
+Air Animal,image/type_air_animal.jpg
