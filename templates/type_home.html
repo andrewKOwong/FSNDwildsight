@@ -1,0 +1,24 @@
+{% extends "base_layout.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/flex-box_sighting.css')}}">
+{% endblock %}
+
+
+{% block content %}
+    <div class="flex-container">
+        {% for sighting in sightings %}
+        
+            <div class="flex-box">
+                <div class="sighting_underlay"></div>
+                <div class="sighting_title sighting_text">{{ sighting.title }}</div>
+                <div class="sighting_desc_h sighting_text">Description:</div>
+                <div class="sighting_desc sighting_text">{{ sighting.description }}</div>
+                <div class="sighting_location_h sighting_text">Location:</div>
+                <div class="sighting_location sighting_text">{{ sighting.location }}</div>
+            </div>
+        
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -7,31 +7,70 @@
 
 .flex-box {
   position: relative;
-  background-color: black;
+  background-color: rgb(15, 15, 15);
   height: 30vw;
   width: 30%;
   margin: 1%;
 }
 
-.type_text {
-  position: absolute;
-  bottom: 5%;
-  width: 100%;
-  font-size: 40px;
-  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
-  color: white;
-  text-align: center;
-}
-
-.type_image {
+.sighting_underlay {
   height: 100%;
   width: 100%;
-  object-fit: cover;
+  background-color: #1f1f1f;
 }
 
-.type_image:hover {
-  opacity:0.5;
+.sighting_underlay:hover {
+  opacity: 0;
   transition: 1s ease;
 }
+
+.sighting_text {
+  position: absolute;
+  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+  color: white;
+  left: 5%;
+  width: 90%;
+}
+
+.sighting_title {
+  position: absolute;
+  top: 5%;
+  height: 20%;
+  font-size: 2vw;
+  text-align: left;
+}
+
+.sighting_desc_h {
+  position: absolute;
+  top: 25%;
+  height: 5%;
+  font-size: 1.vw;
+  text-align: left;
+}
+
+.sighting_desc {
+  position: absolute;
+  top: 30%;
+  height: 40%;
+  font-size: 1.5vw;
+  text-align: left;
+}
+
+.sighting_location_h {
+  position: absolute;
+  top: 75%;
+  height: 5%;
+  font-size: 1.vw;
+  text-align: left;
+}
+
+.sighting_location {
+  position: absolute;
+  top: 80%;
+  height: 10%;
+  font-size: 1.5vw;
+  text-align: left;
+}
+
 
   
