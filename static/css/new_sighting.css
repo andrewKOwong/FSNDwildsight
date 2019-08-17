@@ -1,0 +1,43 @@
+.container {
+  position: relative;
+  margin: auto;
+  width: 75%;
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-top: 5%;
+  padding-bottom: 5%;
+  height: auto;
+  background-color:  rgb(15, 15, 15);
+  border-radius: 5%;
+}
+
+.form {
+  position: relative;
+  margin: auto;
+  width: 100%;
+}
+
+.text{
+  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+}
+
+.label {
+  color: white;
+}
+
+.input {
+  color: black;
+  width:100%;
+}
+
+.input.description {
+  height:100px;
+}
+
+.cancel {
+  left: 20%;
+}
+
+.error {
+  color: red;
+}

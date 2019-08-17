@@ -5,6 +5,8 @@ from sqlalchemy import create_engine
 
 from database_setup import Sighting, SightingType, Base
 
+from sighting_form import SightingForm
+
 from flask import Flask, escape, render_template, request, redirect, url_for, flash
 app = Flask(__name__)
 
@@ -38,22 +40,22 @@ def type_home(type):
     return render_template('type_home.html', sightings=sightings, type=type)
 
 # Placeholder pages to create, edit, and delete pages
-@app.route('/sightings/new/', methods = ['GET', 'POST'])
+@app.route('/submit_sighting/', methods = ['GET', 'POST'])
 def create_sighting():
-    if request.method == 'POST':
-        sighting_type = session.query(SightingType).filter_by(type = request.form['sighting_type']).one()
-        new_sighting = Sighting(title = request.form['title'],
-                                description = request.form['description'],
-                                location = request.form['location'],
-                                sighting_type = sighting_type)
-        session.add(new_sighting)
-        session.commit()
+    sighting_types = session.query(SightingType)
+    form = SightingForm()
+    form.sighting_type.choices = [(type.id, type.type) for type in sighting_types]
+    print(form.validate_on_submit())
+    for f, m in form.errors.items():
+        for err in m:
+            print(f)
+            print(err)
+    print(form.sighting_type.raw_data)
+    if form.validate_on_submit():
         flash("New sighting created!")
-        return redirect(url_for('create_sighting'))
-        
-    else:     
-        sighting_types = session.query(SightingType)
-        return render_template('new_sighting.html', sighting_types = sighting_types)
+        return redirect(url_for('home'))             
+    
+    return render_template('new_sighting.html', form=form)
 
 @app.route('/sightings/<type>/<int:id>/edit/', methods=['GET', 'POST'])
 def edit_sighting(type, id):
