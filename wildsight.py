@@ -45,17 +45,19 @@ def create_sighting():
     sighting_types = session.query(SightingType)
     form = SightingForm()
     form.sighting_type.choices = [(type.id, type.type) for type in sighting_types]
-    print(form.validate_on_submit())
-    for f, m in form.errors.items():
-        for err in m:
-            print(f)
-            print(err)
-    print(form.sighting_type.raw_data)
+    # Handle incoming POST form submission
     if form.validate_on_submit():
+        new_sighting = Sighting(title = form.title.data,
+                                description = form.description.data,
+                                location = form.location.data,
+                                sighting_type = session.query(SightingType).filter_by(id=form.sighting_type.data).one())
+        session.add(new_sighting)
+        session.commit()
         flash("New sighting created!")
         return redirect(url_for('home'))             
-    
-    return render_template('new_sighting.html', form=form)
+    # Otherwise render the new sighting page, with or without form data recycling
+    else:
+        return render_template('new_sighting.html', form=form)
 
 @app.route('/sightings/<type>/<int:id>/edit/', methods=['GET', 'POST'])
 def edit_sighting(type, id):
