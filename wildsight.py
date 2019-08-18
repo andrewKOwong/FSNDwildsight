@@ -33,11 +33,11 @@ def home():
     return render_template('index.html', sightings=sightings, types=types)
 
 # Displays sightings of a particular type
-@app.route('/types/<type>/')
-def type_home(type):
-    type_id = request.args.get('type_id')
+@app.route('/types/<type_id>/')
+def type_home(type_id):
+    type_name = session.query(SightingType).filter_by(id=type_id).one().type
     sightings = session.query(Sighting).filter_by(sighting_type_id=type_id)
-    return render_template('type_home.html', sightings=sightings, type=type)
+    return render_template('type_home.html', sightings=sightings, type_name=type_name)
 
 # Placeholder pages to create, edit, and delete pages
 @app.route('/submit_sighting/', methods = ['GET', 'POST'])

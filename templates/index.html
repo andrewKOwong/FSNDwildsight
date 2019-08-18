@@ -11,7 +11,7 @@
         {% for type in types %}
         
             <div class="flex-box">
-                <a href="{{url_for('type_home', type=type.type, type_id=type.id)}}">
+                <a href="{{url_for('type_home', type_id=type.id)}}">
                     <img class="type_image" src="{{url_for('static', filename=type.image)}}">
                 </a>
                 <div class="type_text">{{ type.type }}</div>
