@@ -42,15 +42,16 @@ def type_home(type):
 # Placeholder pages to create, edit, and delete pages
 @app.route('/submit_sighting/', methods = ['GET', 'POST'])
 def create_sighting():
+    # Initialize sighting type choices for form
     sighting_types = session.query(SightingType)
     form = SightingForm()
-    form.sighting_type.choices = [(type.id, type.type) for type in sighting_types]
+    form.sighting_type_id.choices = [(type.id, type.type) for type in sighting_types]
     # Handle incoming POST form submission
     if form.validate_on_submit():
         new_sighting = Sighting(title = form.title.data,
                                 description = form.description.data,
                                 location = form.location.data,
-                                sighting_type = session.query(SightingType).filter_by(id=form.sighting_type.data).one())
+                                sighting_type = session.query(SightingType).filter_by(id=form.sighting_type_id.data).one())
         session.add(new_sighting)
         session.commit()
         flash("New sighting created!")
@@ -59,35 +60,26 @@ def create_sighting():
     else:
         return render_template('new_sighting.html', form=form)
 
-@app.route('/sightings/<type>/<int:id>/edit/', methods=['GET', 'POST'])
+@app.route('/types/<type>/<int:id>/edit/', methods=['GET', 'POST'])
 def edit_sighting(type, id):
-    if request.method == 'POST':
-        sighting = session.query(Sighting).filter_by(id=id).one()
-        sighting_type = session.query(SightingType).filter_by(type = request.form['sighting_type']).one()
-        # Update required fields only if not empty
-        if request.form['title']:
-            sighting.title = request.form['title']
-        if request.form['location']:
-            sighting.location = request.form['location']
-        if request.form['sighting_type']:
-            sighting.sighting_type = sighting_type
-        # Description is not required
-        sighting.description = request.form['description']
-        
-        session.add(sighting)
+    # Pre fill form with either incoming form data (i.e. from POST),
+    # Or falling back onto a db query (object handles are the same)
+    current_sighting = session.query(Sighting).filter_by(id=id).one()
+    form = SightingForm(request.POST, current_sighting)
+    # Initialize sighting type choices for form
+    sighting_types = session.query(SightingType) 
+    form.sighting_type_id.choices = [(type.id, type.type) for type in sighting_types]
+    # Handle incoming POST form submission
+    if form.validate_on_submit():
+        # As object handles are the same, can use populate_obj()
+        form.populate_obj(current_sighting)
+        session.add(current_sighting)
         session.commit()
-
-        flash("Sighting successfully edited!")
-        return redirect(url_for('home'))
-
+        flash("Sighting edited!")
+        return redirect(url_for('home'))   
+    # Otherwise display the editing form
     else:
-        sighting = session.query(Sighting).filter_by(id = id).one()
-        current_sighting_type = sighting.sighting_type
-        other_sighting_types = session.query(SightingType).filter(SightingType.id != current_sighting_type.id)
-        return render_template('edit_sighting.html', 
-                                sighting=sighting, 
-                                current_sighting_type=current_sighting_type,
-                                other_sighting_types=other_sighting_types)
+        return render_template('edit_sighting.html', form=form)
 
 @app.route('/sightings/<type>/<int:id>/delete/', methods=['GET','POST'])
 def delete_sighting(type, id):
