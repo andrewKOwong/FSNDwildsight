@@ -26,18 +26,7 @@
         {% endwith %}
         
         {% block content %}
-        <div class="flex-container">
-            {% for type in types %}
-            
-                <div class="flex-box type">
-                    <a href="{{url_for('type_home', type=type.type, type_id=type.id)}}">
-                        <img class="type_image" src="{{url_for('static', filename=type.image)}}">
-                    </a>
-                    <div class="type_text">{{ type.type }}</div>
-                </div>
-            
-            {% endfor %}
-        </div>
+
         {% endblock %}
     </body>
 </html>
