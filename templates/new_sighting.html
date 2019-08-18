@@ -1,57 +1,20 @@
-{% extends "base_layout.html" %}
+{% extends "base_sighting.html" %}
 
 {% block head %}
     {{ super() }}
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/new_sighting.css')}}">
 {% endblock %}
 
-{% block content %}
+{% block headline %}
+
 <h1> Log a new wildlife sighting </h1>
 <p>Please fill out the form below</p>
 <br>
-<div class="container">
-    <form class="form" action="", method = "POST" novalidate>
-        <!-- Hidden field for CSRF security -->
-        {{ form.csrf_token }}
-        <!-- Form fields -->
-        <p>
-            {{ form.title.label (class="text label title") }}
-            {% for error in form.title.errors %}
-            <span class="text error">[{{error}}]</span>
-            {% endfor %}
-            <br>
-            {{ form.title (class="form_text" "text input title") }}
-        </p>
-        <p>
-            {{ form.description.label (class="text label description") }}
-            {% for error in form.description.errors %}
-            <span class="text error">[{{error}}]</span>
-            {% endfor %}
-            <br>
-            {{ form.description (class="text input description")}}
-        </p>
-        <p>
-            {{ form.location.label (class="text label location") }}
-            {% for error in form.location.errors %}
-            <span class="text error">[{{error}}]</span>
-            {% endfor %}
-            <br>
-            {{ form.location (class="text input location") }}
-        </p>
-        <p>
-            {{ form.sighting_type.label (class="text label sighting_type") }}
-            {% for error in form.sighting_type.errors %}
-            <span class="text error">[{{error}}]</span>
-            {% endfor %}
-            <br>
-            {{ form.sighting_type (class="text input sighting_type") }}
-        </p>
-        <p>
-            {{ form.submit (class="text") }}
-        </p>
-    </form>
-    <p>
-        <a href="{{url_for('home')}}"><button class="cancel text">Cancel</button></a>
-    </p>
-</div>
+
+{% endblock %}
+
+{% block content %}
+
+    {{super()}}
+
 {% endblock %}

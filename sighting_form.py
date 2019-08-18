@@ -11,5 +11,5 @@ class SightingForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(message=MS_REQ), Length(max=250, message=MS_LEN)])
     description = TextAreaField('Description', validators=[Length(max=2000, message=MS_LEN)])
     location = StringField('Location', validators=[DataRequired(message=MS_REQ), Length(max=200, message=MS_LEN)])
-    sighting_type = SelectField('Sighting Type', coerce=int, validators=[DataRequired(message=MS_REQ)])
+    sighting_type_id = SelectField('Sighting Type', coerce=int, validators=[DataRequired(message=MS_REQ)])
     submit = SubmitField('Submit!')
