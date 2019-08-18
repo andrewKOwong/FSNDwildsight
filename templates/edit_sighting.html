@@ -6,12 +6,19 @@
 {% endblock %}
 
 
-{% block content %}
+{% block headline %}
 
 <h1> Edit a wildlife sighting </h1>
 <p>Please make changes in the form below.</p>
 <br>
 
-    {{super()}}
 
 {% endblock %}
+
+
+{% block cancelbutton %}
+    <p>
+        <a href="{{url_for('type_home', type_id=type_id)}}"><button class="cancel text">Cancel</button></a>
+    </p>
+{% endblock %}
+

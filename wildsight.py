@@ -60,26 +60,32 @@ def create_sighting():
     else:
         return render_template('new_sighting.html', form=form)
 
-@app.route('/types/<type>/<int:id>/edit/', methods=['GET', 'POST'])
-def edit_sighting(type, id):
+@app.route('/types/<type_id>/<int:sighting_id>/edit/', methods=['GET', 'POST'])
+def edit_sighting(type_id, sighting_id):
     # Pre fill form with either incoming form data (i.e. from POST),
     # Or falling back onto a db query (object handles are the same)
-    current_sighting = session.query(Sighting).filter_by(id=id).one()
-    form = SightingForm(request.POST, current_sighting)
+    current_sighting = session.query(Sighting).filter_by(id=sighting_id).one()
+    form = SightingForm(request.form, obj=current_sighting)
+
+    #if request.method == 'POST':
+    #    form = SightingForm(request.form)
+    #else:
+    #    current_sighting = session.query(Sighting).filter_by(id=sighting_id).one()
+    #    form = SightingForm(obj=current_sighting)
     # Initialize sighting type choices for form
     sighting_types = session.query(SightingType) 
     form.sighting_type_id.choices = [(type.id, type.type) for type in sighting_types]
     # Handle incoming POST form submission
-    if form.validate_on_submit():
+    if request.method == 'POST' and form.validate_on_submit():
         # As object handles are the same, can use populate_obj()
         form.populate_obj(current_sighting)
         session.add(current_sighting)
         session.commit()
         flash("Sighting edited!")
-        return redirect(url_for('home'))   
+        return redirect(url_for('type_home', type_id=type_id))   
     # Otherwise display the editing form
     else:
-        return render_template('edit_sighting.html', form=form)
+        return render_template('edit_sighting.html', form=form, type_id=type_id)
 
 @app.route('/sightings/<type>/<int:id>/delete/', methods=['GET','POST'])
 def delete_sighting(type, id):
