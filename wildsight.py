@@ -7,7 +7,7 @@ from database_setup import Sighting, SightingType, Base
 
 from sighting_form import SightingForm
 
-from flask import Flask, escape, render_template, request, redirect, url_for, flash
+from flask import Flask, escape, render_template, request, redirect, url_for, flash, jsonify
 app = Flask(__name__)
 
 # Use of Flask-SQLAlchemy is recommended to avoid # multi threading issues.
@@ -93,6 +93,25 @@ def delete_sighting(type_id, sighting_id):
         return render_template('delete_sighting.html', 
                                 sighting_title=sighting.title,
                                 type_id=type_id)
+
+## JSON APIs
+# JSON API for all sightings
+@app.route('/all/JSON/')
+def all_JSON():
+    sightings = session.query(Sighting)
+    return jsonify(sightings=[i.serialize for i in sightings])
+
+# JSON API for getting sightings of a particular type
+@app.route('/types/<type_id>/JSON/')
+def type_home_JSON(type_id):
+    sightings = session.query(Sighting).filter_by(sighting_type_id=type_id)
+    return jsonify(sightings=[i.serialize for i in sightings])
+
+# JSON API for a specific sighting
+@app.route('/types/<type_id>/<int:sighting_id>/JSON/')
+def sighting_JSON(type_id, sighting_id):
+    current_sighting = session.query(Sighting).filter_by(id=sighting_id).one()
+    return jsonify(sightings=current_sighting.serialize) 
 
 
 if __name__ == '__main__':
