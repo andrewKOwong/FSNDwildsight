@@ -66,12 +66,6 @@ def edit_sighting(type_id, sighting_id):
     # Or falling back onto a db query (object handles are the same)
     current_sighting = session.query(Sighting).filter_by(id=sighting_id).one()
     form = SightingForm(request.form, obj=current_sighting)
-
-    #if request.method == 'POST':
-    #    form = SightingForm(request.form)
-    #else:
-    #    current_sighting = session.query(Sighting).filter_by(id=sighting_id).one()
-    #    form = SightingForm(obj=current_sighting)
     # Initialize sighting type choices for form
     sighting_types = session.query(SightingType) 
     form.sighting_type_id.choices = [(type.id, type.type) for type in sighting_types]
@@ -87,16 +81,18 @@ def edit_sighting(type_id, sighting_id):
     else:
         return render_template('edit_sighting.html', form=form, type_id=type_id)
 
-@app.route('/sightings/<type>/<int:id>/delete/', methods=['GET','POST'])
-def delete_sighting(type, id):
-    sighting = session.query(Sighting).filter_by(id=id).one()
+@app.route('/types/<type_id>/<int:sighting_id>/delete/', methods=['GET', 'POST'])
+def delete_sighting(type_id, sighting_id):
+    sighting = session.query(Sighting).filter_by(id=sighting_id).one()
     if request.method == 'POST':
         session.delete(sighting)
         session.commit()
         flash("Sighting deleted!")
-        return redirect(url_for('home'))
+        return redirect(url_for('type_home', type_id=type_id))
     else:
-        return render_template('delete_sighting.html', sighting=sighting)
+        return render_template('delete_sighting.html', 
+                                sighting_title=sighting.title,
+                                type_id=type_id)
 
 # Displays types available
 @app.route('/types/')
