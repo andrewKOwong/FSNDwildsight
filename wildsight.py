@@ -94,15 +94,6 @@ def delete_sighting(type_id, sighting_id):
                                 sighting_title=sighting.title,
                                 type_id=type_id)
 
-# Displays types available
-@app.route('/types/')
-def list_types():
-    types = session.query(SightingType)
-    output = ''
-    for i in types:
-        output += i.type
-        output += '</br>'
-    return output
 
 if __name__ == '__main__':
     app.debug = True
