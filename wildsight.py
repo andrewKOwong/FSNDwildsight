@@ -3,7 +3,7 @@ from builtins import type as typeof # For debugging
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 
-from database_setup import Sighting, SightingType, Base
+from database_setup import Sighting, SightingType, Base, User
 
 from sighting_form import SightingForm
 
@@ -114,9 +114,39 @@ def gsignin():
     # URL string for Google server with picture
     login_session['picture'] = credentials.id_token['picture']
 
+    ## Check to see if user already exists in user db,
+    ## Otherwise create a new user
+    user_id = get_user_id(login_session['email'])
+    if user_id is None:
+        user_id = create_user(login_session)
+    ## Attach the user id
+    login_session['user_id'] = user_id
+
+
     flash("Welcome {}!".format(login_session['user_name']))
     # Return blank html, as login page will handle redirect
     return "<html></html>"
+
+## Helper functions for creating/checking for new users
+def create_user(login_session):
+    new_user = User(name=login_session['user_name'],
+                    email=login_session['email'],
+                    picture=login_session['picture'])
+    session.add(new_user)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+def get_user_info(user_id):
+    return session.query(User).filter_by(id=user_id).one()
+
+def get_user_id(email):
+    # If can't find email, then return None
+    try:
+        return session.query(User).filter_by(email=email).one()
+    except:
+        return None
+
 
 @app.route('/gsignout', methods=['POST'])
 def gsignout():
@@ -145,12 +175,13 @@ def gsignout():
 
 # Login page
 @app.route('/login')
-def showLogin():
+def show_login():
     # SystemRandom provides more secure randomness from OS for anti-CSRF forgery token
     csrf_token = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits)
              for _ in range(32))
     login_session['csrf_token'] = csrf_token
     return render_template('login.html', csrf_token=csrf_token)
+
 
 # Home page displays categories of sighting types
 @app.route('/')
@@ -166,11 +197,22 @@ def home():
 def type_home(type_id):
     type_name = session.query(SightingType).filter_by(id=type_id).one().type
     sightings = session.query(Sighting).filter_by(sighting_type_id=type_id)
-    return render_template('type_home.html', sightings=sightings, type_name=type_name)
+    # current_user_id allows Jinja template to check
+    # which sightings belong to a logged in user,
+    # and displays editing/deletion links accordingly.
+    current_user_id = login_session.get('user_id')
+    
+    return render_template('type_home.html', sightings=sightings,
+                                             type_name=type_name, 
+                                             current_user_id=current_user_id)
 
 # Placeholder pages to create, edit, and delete pages
 @app.route('/submit_sighting/', methods = ['GET', 'POST'])
 def create_sighting():
+    # Check that user is logged in, if not redirect to login page
+    if 'user_name' not in login_session:
+        return redirect('/login')
+
     # Initialize sighting type choices for form
     sighting_types = session.query(SightingType)
     form = SightingForm()
@@ -191,18 +233,30 @@ def create_sighting():
 
 @app.route('/types/<type_id>/<int:sighting_id>/edit/', methods=['GET', 'POST'])
 def edit_sighting(type_id, sighting_id):
+    # Check that user is logged in, if not redirect to login page
+    if 'user_name' not in login_session:
+        return redirect('/login')
+
+    # Check that the user is the owner of the sighting
+    # If not, return them to type home w/ flash
+    current_user = login_session.get('user_id')
+    sighting = session.query(Sighting).filter_by(id=sighting_id).one()
+    if current_user != sighting.user_id:
+        flash("Sorry, only the owner of a sighting can edit.")
+        return redirect(url_for('type_home', type_id=type_id))
+
     # Pre fill form with either incoming form data (i.e. from POST),
     # Or falling back onto a db query (object handles are the same)
-    current_sighting = session.query(Sighting).filter_by(id=sighting_id).one()
-    form = SightingForm(request.form, obj=current_sighting)
+    
+    form = SightingForm(request.form, obj=sighting)
     # Initialize sighting type choices for form
     sighting_types = session.query(SightingType) 
     form.sighting_type_id.choices = [(type.id, type.type) for type in sighting_types]
     # Handle incoming POST form submission
     if request.method == 'POST' and form.validate_on_submit():
         # As object handles are the same, can use populate_obj()
-        form.populate_obj(current_sighting)
-        session.add(current_sighting)
+        form.populate_obj(sighting)
+        session.add(sighting)
         session.commit()
         flash("Sighting edited!")
         return redirect(url_for('type_home', type_id=type_id))   
@@ -212,7 +266,19 @@ def edit_sighting(type_id, sighting_id):
 
 @app.route('/types/<type_id>/<int:sighting_id>/delete/', methods=['GET', 'POST'])
 def delete_sighting(type_id, sighting_id):
+    # Check that user is logged in, if not redirect to login page
+    if 'user_name' not in login_session:
+        return redirect('/login')
+
+    # Check that the user is the owner of the sighting
+    # If not, return them to type home w/ flash
+    current_user = login_session.get('user_id')
     sighting = session.query(Sighting).filter_by(id=sighting_id).one()
+    if current_user != sighting.user_id:
+        flash("Sorry, only the owner of a sighting can delete.")
+        return redirect(url_for('type_home', type_id=type_id))
+
+    
     if request.method == 'POST':
         session.delete(sighting)
         session.commit()
