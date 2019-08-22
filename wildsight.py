@@ -222,7 +222,8 @@ def create_sighting():
         new_sighting = Sighting(title = form.title.data,
                                 description = form.description.data,
                                 location = form.location.data,
-                                sighting_type = session.query(SightingType).filter_by(id=form.sighting_type_id.data).one())
+                                sighting_type_id = form.sighting_type_id.data
+                                )
         session.add(new_sighting)
         session.commit()
         flash("New sighting created!")
