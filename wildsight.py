@@ -8,7 +8,30 @@ from database_setup import Sighting, SightingType, Base
 from sighting_form import SightingForm
 
 from flask import Flask, escape, render_template, request, redirect, url_for, flash, jsonify
+
+# User session management
+from flask import session as login_session
+# Import for anti-forgery state token
+import random
+import string
+
+# aborting bad login calls
+from flask import abort
+
+# Import for OAuth login implementation
+from oauth2client.client import credentials_from_clientsecrets_and_code
+from oauth2client.client import FlowExchangeError
+import httplib2
+import json
+from flask import make_response
+import requests
+
+
 app = Flask(__name__)
+
+# Client ID for Google signin
+CLIENT_ID = json.loads(
+    open('DO_NOT_COMMIT_client_secrets.json', 'r').read())['web']['client_id']
 
 # Use of Flask-SQLAlchemy is recommended to avoid # multi threading issues.
 # See https://docs.sqlalchemy.org/en/13/orm/contextual.html 
@@ -16,12 +39,118 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///wildsight.db'
 db = SQLAlchemy(app)
 session = db.session
 
-# Old non Flask SQLAlchemy code
-#from sqlalchemy.orm import sessionmaker
-#engine = create_engine('sqlite:///wildsight.db')
-#Base.metadata.bind = engine
-#DBSession = sessionmaker(bind=engine)
-#session = DBSession()
+@app.route('/gsignin', methods=['POST'])
+def gsignin():
+    # Validate anti-CSRF token
+    if request.args.get('csrf_token') != login_session['csrf_token']:
+        abort(403)
+    # Check for presence of 'X-Requested-With' header as
+    # anti-CSRF measure.
+    if not request.headers.get('X-Requested-With'):
+        abort(403)
+    
+    # Obtain the auth code
+    auth_code = request.data
+
+    # JSON client secrets file from Google
+    CLIENT_SECRETS_FILE = 'DO_NOT_COMMIT_client_secrets.json'
+
+    # Upgrade the auth code into a credentials
+    try: 
+        credentials = credentials_from_clientsecrets_and_code(
+            filename=CLIENT_SECRETS_FILE,
+            scope=['profile', 'email'],
+            code=auth_code)
+    except FlowExchangeError:
+        response = make_response(
+            json.dumps("Couldn't get access token from auth code"), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    
+    ## Check that the access token is valid via Google API
+    access_token = credentials.access_token
+    # Google token verification url
+    url = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}".format(access_token)
+    # Request to google's server that returns a JSON response
+    h = httplib2.Http()
+    # 2nd item contains a dict of useful results
+    # (1st item is header)
+    # Curiously, if there is an error, the response isn't a raw string 
+    result = json.loads(h.request(url, 'GET')[1].decode('utf-8'))
+    # If there is an error, abort with useful information
+    if result.get('error') is not None:
+        response = make_response(json.dumps(result.get('error')), 500)
+        response.headers['Content-Type'] = "application/json"
+        return response
+
+    ## Check if the token is for the right user
+    g_id = credentials.id_token['sub']
+    if result['user_id'] != g_id:
+        response = make_response(json.dumps("Token ID does not match user", 401))
+        response.headers['Content-Type'] = "application/json"
+        return response
+
+    ## Check if token matches this app's client ID
+    if result['issued_to'] != CLIENT_ID:
+        response = make_response(json.dumps("Incorrect token for this app.", 401))
+        response.headers['Content-Type'] = "application/json"
+        return response
+
+    ## Check to see if user is already signed in
+    stored_access_token = login_session.get('access_token')
+    stored_g_id = login_session.get('g_id')
+    if stored_access_token is not None and g_id == stored_g_id:
+        response = make_response(json.dumps("User already signed in.", 200))
+        response.headers['Content-Type'] = "application/json"
+        return response
+
+    ## Otherwise store this new access token
+    login_session['access_token'] = credentials.access_token
+    login_session['g_id'] = g_id
+
+    ## Attach user info to the session
+    login_session['user_name'] = credentials.id_token['name']
+    login_session['email'] = credentials.id_token['email']
+    # URL string for Google server with picture
+    login_session['picture'] = credentials.id_token['picture']
+
+    flash("Welcome {}!".format(login_session['user_name']))
+    # Return blank html, as login page will handle redirect
+    return "<html></html>"
+
+@app.route('/gsignout', methods=['POST'])
+def gsignout():
+    access_token = login_session.get['access_token']
+    if access_token is None:
+        response = make_response(json.dumps('Current user not signed in/connected'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[0]
+    if result['status'] == '200':
+        del login_session['access_token']
+        del login_session['gplus_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    else:
+        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+# Login page
+@app.route('/login')
+def showLogin():
+    # SystemRandom provides more secure randomness from OS for anti-CSRF forgery token
+    csrf_token = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits)
+             for _ in range(32))
+    login_session['csrf_token'] = csrf_token
+    return render_template('login.html', csrf_token=csrf_token)
 
 # Home page displays categories of sighting types
 @app.route('/')

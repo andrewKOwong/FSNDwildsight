@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <!-- BEGIN Pre-requisites for Google Server-Side Flow -->
+   <!-- See https://developers.google.com/identity/sign-in/web/server-side-flow -->
+   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+   </script>
+   <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
+   </script>
+   <!-- END Pre-requisites -->
+   
+   <!-- Load auth2 library and initialize GoogleAuth object -->
+   <script>
+        function start() {
+          gapi.load('auth2', function() {
+            auth2 = gapi.auth2.init({
+              client_id: '364029214060-3cbcugm8m9fbojm62vb3ucv4g1uis8e7.apps.googleusercontent.com'
+            });
+          });
+        }
+    </script>
+</head>
+
+
+<body>  
+
+    <!-- Sign in code adapted from: -->
+    <!-- https://developers.google.com/identity/sign-in/web/server-side-flow -->
+
+    <button id="signinButton">Sign in with Google</button>
+    <script>
+        $('#signinButton').click(function() {
+        // signInCallback below
+        auth2.grantOfflineAccess().then(signInCallback);
+        });
+    </script>
+
+
+    <div id="login_result"></div>
+
+
+    <script>
+        function signInCallback(authResult) {
+          if (authResult['code']) {
+        
+            // Hide the sign-in button if user is authorized.
+            $('#signinButton').attr('style', 'display: none');
+        
+            // JQuery AJAX request to the Wildsight server
+            $.ajax({
+              type: 'POST',
+              
+              url: "{{url_for('gsignin', csrf_token=csrf_token)}}",
+              
+              // `X-Requested-With` in AJAX requests helps prevent CSRF attacks,
+              // if server code checks for presence of this header.
+              // See https://stackoverflow.com/questions/17478731/whats-the-point-of-the-x-requested-with-header
+              headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+              },
+              
+              contentType: 'application/octet-stream; charset=utf-8',
+              
+              // Upon successful request to Wildsight server,
+              // redirect to home page.
+              success: function(result) {
+                if (result) {
+                    $('#login_result').html('Login successful! You will be redirected.')
+                    // Redirect after 3 seconds.
+                    setTimeout(function(){
+                        window.location.href = "/";
+                    }, 3000);
+                }
+              },
+
+              error: function(xhr){
+                $('#login_result').html('Error in reaching Wildsight server, please try again later.' +
+                                        '<br>' + xhr.responseText);
+                console.log('xhr: ' + xhr.responseText);
+                console.log(xhr.status)
+
+                // This gets thrown if CSRF token doesn't match
+                if (xhr.status == 403){
+                    $("html").html(xhr.responseText);    
+                }
+
+              },  
+              
+              // Prevents data from being processed into a query string
+              processData: false,
+              
+              data: authResult['code']
+            });
+          } else {
+            // Gives error message if fail to get auth code.
+            $('#login_result').html('Error in getting authorization code. Please refresh and try again.')
+          }
+        }
+    </script>
+
+
+
+
+<!--END GOOGLE PLUS SIGN IN BUTTON -->
+
+  </body>
+
+  </html>
