@@ -146,25 +146,6 @@ def get_user_id(email):
     except:
         return None
 
-@app.route('/gtest')
-def gtest():
-    access_token = login_session.get('access_token')
-    print('https://accounts.google.com/o/oauth2/revoke?token={}'.format(access_token))
-    # Google token verification url
-    url = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}".format(access_token)
-    # Request to google's server that returns a JSON response
-    h = httplib2.Http()
-    # 2nd item contains a dict of useful results
-    # (1st item is header)
-    # Curiously, if there is an error, the response isn't a raw string 
-    result = json.loads(h.request(url, 'GET')[1].decode('utf-8'))
-    # If there is an error, abort with useful information
-    print(result)
-
-
-    return "<html></html>"
-
-
 @app.route('/gsignout')
 def gsignout():
     access_token = login_session.get('access_token')
@@ -188,9 +169,9 @@ def gsignout():
         del login_session['user_name']
         del login_session['email']
         del login_session['picture']
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        del login_session['user_id']
+        flash('Successfully logged out!')
+        return redirect(url_for('home'))
     else:
         # Clear out 
         response = make_response(json.dumps('Failed to revoke token for given user.', 400))
@@ -199,7 +180,7 @@ def gsignout():
 
 # Login page
 @app.route('/login')
-def show_login():
+def login():
     # SystemRandom provides more secure randomness from OS for anti-CSRF forgery token
     csrf_token = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits)
              for _ in range(32))
@@ -214,7 +195,10 @@ def home():
     #sightings = session.query(Sighting).filter_by(sighting_type_id = sighting_type.id)
     types = session.query(SightingType) # Sighting Types are pre-ordered before db creation
     sightings = session.query(Sighting)
-    return render_template('index.html', sightings=sightings, types=types)
+    # For checking if the user is logged in,
+    # to display login/logout in nav bar
+    current_user_id = login_session.get('user_id')
+    return render_template('index.html', sightings=sightings, types=types, current_user_id=current_user_id)
 
 # Displays sightings of a particular type
 @app.route('/types/<type_id>/')
@@ -254,7 +238,10 @@ def create_sighting():
         return redirect(url_for('home'))             
     # Otherwise render the new sighting page, with or without form data recycling
     else:
-        return render_template('new_sighting.html', form=form)
+        # For checking if the user is logged in,
+        # to display login/logout in nav bar
+        current_user_id = login_session.get('user_id')
+        return render_template('new_sighting.html', form=form, current_user_id=current_user_id)
 
 @app.route('/types/<type_id>/<int:sighting_id>/edit/', methods=['GET', 'POST'])
 def edit_sighting(type_id, sighting_id):
@@ -287,7 +274,10 @@ def edit_sighting(type_id, sighting_id):
         return redirect(url_for('type_home', type_id=type_id))   
     # Otherwise display the editing form
     else:
-        return render_template('edit_sighting.html', form=form, type_id=type_id)
+        # For checking if the user is logged in,
+        # to display login/logout in nav bar
+        current_user_id = login_session.get('user_id')
+        return render_template('edit_sighting.html', form=form, type_id=type_id, current_user_id=current_user_id)
 
 @app.route('/types/<type_id>/<int:sighting_id>/delete/', methods=['GET', 'POST'])
 def delete_sighting(type_id, sighting_id):
@@ -310,9 +300,13 @@ def delete_sighting(type_id, sighting_id):
         flash("Sighting deleted!")
         return redirect(url_for('type_home', type_id=type_id))
     else:
+        # For checking if the user is logged in,
+        # to display login/logout in nav bar
+        current_user_id = login_session.get('user_id')
         return render_template('delete_sighting.html', 
                                 sighting_title=sighting.title,
-                                type_id=type_id)
+                                type_id=type_id,
+                                current_user_id=current_user_id)
 
 ## JSON APIs
 # JSON API for all sightings

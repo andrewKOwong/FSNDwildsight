@@ -19,9 +19,13 @@
 
 /* Stack links on the right */
 #nav_home {
-    float: right;
+  float: right;
 }
 #nav_new_entry {
+  float: right;
+  margin-right: 30px;
+}
+.nav_login_logout {
   float: right;
   margin-right: 30px;
 }

@@ -19,6 +19,8 @@
           });
         }
     </script>
+
+    <link rel=stylesheet type=text/css href="{{url_for('static', filename='css/login.css')}}">
 </head>
 
 
@@ -26,10 +28,15 @@
 
     <!-- Sign in code adapted from: -->
     <!-- https://developers.google.com/identity/sign-in/web/server-side-flow -->
+    <p>
+        <img id="signin_button"
+             src="{{url_for('static', filename="icon/btn_google_signin_dark.png")}}"
+             alt="Sign in with Google."
+             >
+    </p>
 
-    <button id="signinButton">Sign in with Google</button>
     <script>
-        $('#signinButton').click(function() {
+        $('#signin_button').click(function() {
         // signInCallback below
         auth2.grantOfflineAccess().then(signInCallback);
         });
@@ -43,7 +50,7 @@
         function signInCallback(authResult) {
           if (authResult['code']) {
             // Hide the sign-in button if user is authorized.
-            $('#signinButton').attr('style', 'display: none');
+            $('#signin_button').attr('style', 'display: none');
         
             // JQuery AJAX request to the Wildsight server
             $.ajax({

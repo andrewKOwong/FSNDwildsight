@@ -10,9 +10,15 @@
     </head>
     <body>
         <ul id="topbar">
+            <!-- Reverse order due to css float:right property -->
             <li id="top_title">WILDSIGHT - Wildlife Sightings</li>
             <li id="nav_home"><a href="{{url_for('home')}}">Home</a></li>
             <li id="nav_new_entry"><a href="{{url_for('create_sighting')}}"> New Entry </a></li>
+            {% if current_user_id %}
+                <li class="nav_login_logout"><a href="{{url_for('gsignout')}}">Logout</a></li>
+            {% else %}
+                <li class="nav_login_logout"><a href="{{url_for('login')}}">Login</a></li>
+            {% endif %}
         </ul>
 
         {% with messages = get_flashed_messages() %}
