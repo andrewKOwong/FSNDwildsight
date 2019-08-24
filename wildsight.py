@@ -122,7 +122,6 @@ def gsignin():
     ## Attach the user id
     login_session['user_id'] = user_id
 
-
     flash("Welcome {}!".format(login_session['user_name']))
     # Return blank html, as login page will handle redirect
     return "<html></html>"
@@ -143,32 +142,57 @@ def get_user_info(user_id):
 def get_user_id(email):
     # If can't find email, then return None
     try:
-        return session.query(User).filter_by(email=email).one()
+        return session.query(User).filter_by(email=email).one().id
     except:
         return None
 
+@app.route('/gtest')
+def gtest():
+    access_token = login_session.get('access_token')
+    print('https://accounts.google.com/o/oauth2/revoke?token={}'.format(access_token))
+    # Google token verification url
+    url = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}".format(access_token)
+    # Request to google's server that returns a JSON response
+    h = httplib2.Http()
+    # 2nd item contains a dict of useful results
+    # (1st item is header)
+    # Curiously, if there is an error, the response isn't a raw string 
+    result = json.loads(h.request(url, 'GET')[1].decode('utf-8'))
+    # If there is an error, abort with useful information
+    print(result)
 
-@app.route('/gsignout', methods=['POST'])
+
+    return "<html></html>"
+
+
+@app.route('/gsignout')
 def gsignout():
-    access_token = login_session.get['access_token']
+    access_token = login_session.get('access_token')
     if access_token is None:
         response = make_response(json.dumps('Current user not signed in/connected'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
 
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
-    h = httplib2.Http()
-    result = h.request(url, 'GET')[0]
-    if result['status'] == '200':
+    # Google revoke token url
+    url = 'https://accounts.google.com/o/oauth2/revoke'
+    # See https://developers.google.com/identity/protocols/OAuth2WebServer#tokenrevoke
+    status_code = requests.post(url,
+                  params={'token': access_token},
+                  headers={'content-type':'application/x-www-form-urlencoded'}).status_code
+
+    print(status_code)
+
+    if status_code == 200:
         del login_session['access_token']
-        del login_session['gplus_id']
-        del login_session['username']
+        del login_session['g_id']
+        del login_session['user_name']
         del login_session['email']
         del login_session['picture']
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
+        # Clear out 
         response = make_response(json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -222,8 +246,8 @@ def create_sighting():
         new_sighting = Sighting(title = form.title.data,
                                 description = form.description.data,
                                 location = form.location.data,
-                                sighting_type_id = form.sighting_type_id.data
-                                )
+                                sighting_type_id = form.sighting_type_id.data,
+                                user_id=login_session.get('user_id'))
         session.add(new_sighting)
         session.commit()
         flash("New sighting created!")
