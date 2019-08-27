@@ -26,6 +26,9 @@ import json
 from flask import make_response
 import requests
 
+# For generating secret key for the app
+from os import urandom
+
 
 app = Flask(__name__)
 
@@ -308,27 +311,35 @@ def delete_sighting(type_id, sighting_id):
                                 type_id=type_id,
                                 current_user_id=current_user_id)
 
-## JSON APIs
+
+
+##### JSON APIs #####
 # JSON API for all sightings
-@app.route('/all/JSON/')
-def all_JSON():
+@app.route('/api/sightings/')
+def JSON_sightings_all():
     sightings = session.query(Sighting)
     return jsonify(sightings=[i.serialize for i in sightings])
 
-# JSON API for getting sightings of a particular type
-@app.route('/types/<type_id>/JSON/')
-def type_home_JSON(type_id):
-    sightings = session.query(Sighting).filter_by(sighting_type_id=type_id)
-    return jsonify(sightings=[i.serialize for i in sightings])
-
-# JSON API for a specific sighting
-@app.route('/types/<type_id>/<int:sighting_id>/JSON/')
-def sighting_JSON(type_id, sighting_id):
+# JSON API for a specific sighting, by id
+@app.route('/api/sightings/<sighting_id>/')
+def JSON_sightings(sighting_id):
     current_sighting = session.query(Sighting).filter_by(id=sighting_id).one()
     return jsonify(sightings=current_sighting.serialize) 
 
+# JSON API for getting types
+@app.route('/api/types/')
+def JSON_types():
+    types = session.query(SightingType)
+    return jsonify(types=[i.serialize for i in types])
 
+# JSON API for getting sightings of a particular type
+@app.route('/api/types/<type_id>/')
+def JSON_sightings_per_type(type_id):
+    sightings = session.query(Sighting).filter_by(sighting_type_id=type_id)
+    return jsonify(sightings=[i.serialize for i in sightings])
+
+# Main app routine
 if __name__ == '__main__':
     app.debug = True
-    app.secret_key = 'placeholder_secret_key'
+    app.secret_key = urandom(32)
     app.run(host = '0.0.0.0', port = 5000)
