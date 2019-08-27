@@ -29,6 +29,17 @@
                 <div class="sighting_desc sighting_text">{{ sighting.description }}</div>
                 <div class="sighting_location_h sighting_text">Location:</div>
                 <div class="sighting_location sighting_text">{{ sighting.location }}</div>
+                <div class="creator_info sighting_text ">
+                    {% if sighting.user.picture %}
+                    <img class="creator_image" src="{{ sighting.user.picture }}">
+                    {% else %}
+                    <img class="creator_image" src="{{url_for('static', filename='icon/icon_default_profile.png')}}">
+                    {% endif %}
+                    
+                    <div class="creator_name" >
+                        {{ sighting.user.name }}
+                    </div>
+                </div>
             </div>
         
         {% endfor %}

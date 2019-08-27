@@ -73,23 +73,50 @@
 
 .sighting_desc {
   top: 30%;
-  height: 40%;
+  height: 30%;
   font-size: 1.5vw;
   text-align: left;
 }
 
 .sighting_location_h {
-  top: 75%;
+  top: 65%;
   height: 5%;
   font-size: 1.15vw;
   text-align: left;
 }
 
 .sighting_location {
-  top: 80%;
+  top: 70%;
   height: 10%;
   font-size: 1.5vw;
   text-align: left;
+}
+
+.creator_info {
+  position: absolute;
+  top: 85%;
+  height: 10%;
+}
+
+.creator_image {
+  position: absolute;
+  float: left;
+  max-height: 100%;
+  max-width: 100%;
+  height: 100%;
+  width: auto;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.creator_name {
+  position: absolute;
+  left: 15%;
+  font-size: 1.5vw;
+  /* Following is for vertical centering */
+  top: 50%;
+  margin: 0;
+  transform: translateY(-50%);
 }
 
 
