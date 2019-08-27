@@ -7,3 +7,6 @@ __pycache__/
 
 # Ignore client secrets for google signin
 DO_NOT_COMMIT_client_secrets.json
+
+# Ignore VSCode editor settings
+.vscode/
