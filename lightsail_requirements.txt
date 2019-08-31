@@ -1,0 +1,14 @@
+# Used in wildsight.py
+Flask-SQLAlchemy
+SQLAlchemy
+Flask
+oauth2client
+httplib2
+requests
+# Additionally used in database_setup.py
+# None
+# Additionally used in populate_db.py
+pandas
+# Additionally used in sighting_form.py
+Flask-WTF
+WTForms
